@@ -66,9 +66,38 @@ p {
   font-size: 0.9rem;
 }
 
+p.redirect {
+  margin-top: 1rem;
+  text-align: center;
+  color: #043b75;
+  font-size: 1rem;
+}
+
 @media (max-width: 480px) {
   .login {
     padding: 1.5rem;
     width: 90%;
+  }
+}
+
+button[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #000;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-left: 10px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

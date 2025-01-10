@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/login.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -12,19 +15,25 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage('');
     try {
       const response = await axios.post(
         'http://localhost:5000/api/auth/login',
         formData
       );
-      // const { token, user } = response.data;
-      // localStorage.setItem("token", token);
-      // setMessage(`Login successful! Welcome, ${user.name}.`);
       localStorage.setItem('token', response.data.token);
-      setMessage('Login successful! Welcome, ${response.data.user.name}.');
+      const user = response.data.user;
+      setMessage(`Login successful! Welcome, ${user.name}!`);
     } catch (error) {
       setMessage(error.response.data.message || 'Error logging in');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleRegisterRedirect = () => {
+    navigate('/register');
   };
 
   return (
@@ -45,8 +54,20 @@ const Login = () => {
           value={formData.password}
           onChange={handleChange}
         />
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? (
+            <>
+              Processing...
+              <span className="spinner"></span>
+            </>
+          ) : (
+            'Login'
+          )}
+        </button>
       </form>
+      <p type="button" onClick={handleRegisterRedirect} className="redirect">
+        Register New User
+      </p>
       {message && <p>{message}</p>}
     </div>
   );
